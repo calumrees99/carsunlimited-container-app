@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+
+  cartdb:
+   image: redis:6.2-alpine
+   ports:
+   - 6379:6379
+
+  cart-api:
+   image: ${DOCKER_REGISTRY-}cart.api
+   build:
+    context: .
+    dockerfile: CarsUnlimited.CartAPI/Dockerfile
+   ports:
+    - 5020:80
+   environment:
+   - ASPNETCORE_ENVIRONMENT=Development
+   - RedisSettings__Password=""
+   - RedisSettings__Ssl=false
+   - RedisSettings__Host=cartdb
+   - RedisSettings__Port=6379
+   - TracingConfiguration__JaegerEndpoint__Host=jaeger
+   - TracingConfiguration__JaegerEndpoint__Port=6831
+   depends_on:
+    - cartdb

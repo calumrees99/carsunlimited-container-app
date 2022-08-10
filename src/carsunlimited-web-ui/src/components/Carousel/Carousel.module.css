@@ -1,0 +1,11 @@
+.Carousel {
+    display:block;
+    width:100%;
+    height:45vh;
+    overflow: hidden;
+}
+
+.carouselItem {
+    max-width: 100%;
+    height: 700px;
+}

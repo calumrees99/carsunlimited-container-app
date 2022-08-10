@@ -1,0 +1,54 @@
+name: $(SourceBranchName)-$(Date:yyyyMMdd)$(Rev:.r)
+pool: 'linux pool'
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - cicd/shared-pipeline.yml
+
+parameters:
+  - name: environments
+    type: object
+    default: [dev]
+
+variables:
+- template: variables/vars-global.yml
+
+stages:
+  - stage: DeployTfState
+    displayName: DeployTfState
+    jobs:
+    - job: DeployTfStateBicep
+      displayName: DeployTfStateBicep
+      steps:
+        - template: steps/steps-deploy-tfstate.yml
+
+  - stage: DeploySharedTerraform
+    displayName: Deploy Shared Infrastructure
+    jobs:
+      - job: Deploy_SharedTerraform
+        displayName: Deploy_Shared
+        variables:
+          - template: variables/vars-deploy-terraform-shared.yml
+        steps:
+          - template: steps/steps-deploy-terraform.yml
+            parameters:
+              environment: 'shared'
+              service: 'shared'
+              
+  - stage: DeployEnvironmentSharedTerraform
+    displayName: Deploy Environment specific Shared Infrastructure
+    jobs:
+    - ${{ each env in parameters.environments }}:
+      - job: Deploy_${{ env }}_shared
+        displayName: Deploy_${{ env }}}_shared
+        condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main')) 
+        variables:
+          - template: variables/vars-deploy-terraform-${{ env }}.yml
+        steps:
+          - template: steps/steps-deploy-terraform.yml
+            parameters:
+              environment: '{{ parameters.env }}'
+              service: 'environment_shared'

@@ -1,0 +1,63 @@
+
+## BUILD/Scan/Push Docker Image
+steps:
+
+# Build the docker container
+- task: Docker@2 
+  displayName: Build an image
+  inputs:
+    containerRegistry: '$(dockerRegistryServiceConnection)'
+    repository: '$(imageRepository)'
+    command: 'build'
+    Dockerfile: '$(dockerfilePath)' 
+    buildContext: '$(Build.SourcesDirectory)/src'
+    tags: |
+      $(tag)
+      latest
+
+# Trivy
+- script: |
+    sudo apt-get install rpm
+    wget https://github.com/aquasecurity/trivy/releases/download/v$(trivyVersion)/trivy_$(trivyVersion)_Linux-64bit.deb
+    sudo dpkg -i trivy_$(trivyVersion)_Linux-64bit.deb
+    trivy -v
+  displayName: 'Download and install Trivy'
+
+# Do the Trivy scan. All the vulnerabilities found will be reported in the build log. Trivvy scan should fail if any High/Critical vunerabilities
+# - task: CmdLine@2
+#   displayName: "Run trivy scan"
+#   inputs:
+#     script: |
+#         trivy image --severity LOW,MEDIUM --format template --template "@cicd/trivy-junit.tpl" -o junit-report-low-med.xml $(containerRegistry)/$(imageRepository):$(tag)         
+#         trivy image --severity HIGH,CRITICAL --format template --template "@cicd/trivy-junit.tpl" -o junit-report-high-crit.xml $(containerRegistry)/$(imageRepository):$(tag)  
+        
+# - task: PublishTestResults@2
+#   displayName: "Publish Trivy scan results - low and med"
+#   inputs:
+#     testResultsFormat: 'JUnit'
+#     testResultsFiles: '**/junit-report-low-med.xml'
+#     mergeTestResults: true
+#     failTaskOnFailedTests: false
+#     testRunTitle: 'Trivy - Low and Medium Vulnerabilities'
+#   condition: 'always()'   
+
+# - task: PublishTestResults@2
+#   displayName: "Publish Trivy scan results - high and critical"
+#   inputs:
+#     testResultsFormat: 'JUnit'
+#     testResultsFiles: '**/junit-report-high-crit.xml'
+#     mergeTestResults: true
+#     failTaskOnFailedTests: true
+#     testRunTitle: 'Trivy - High and Critical Vulnerabilities'
+#   condition: 'always()'  
+
+## Pushes docker container to chosen repository (Default ACR)
+- task: Docker@2
+  displayName: "Push image"
+  inputs:
+    containerRegistry: '$(dockerRegistryServiceConnection)'
+    repository: '$(imageRepository)'
+    command: 'push'
+    tags: |
+      $(tag)
+      latest

@@ -1,0 +1,3 @@
+variables:
+  dockerfilePath: '$(Build.SourcesDirectory)/src/CarsUnlimited.Web/Dockerfile'
+  trivyVersion: '0.20.1'

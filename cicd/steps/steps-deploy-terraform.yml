@@ -1,0 +1,54 @@
+parameters:
+- name: environment
+  type: string
+- name: service
+  type: string
+
+steps:
+## Deploy Terraform
+- task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+  displayName: "Install Terraform"
+  inputs:
+    terraformVersion: '$(terraformVersion)'
+
+- task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+  displayName: "Terraform init"
+  inputs:
+    command: 'init'
+    workingDirectory: '$(System.DefaultWorkingDirectory)/deploy/infrastructure/${{ parameters.service }}'
+    backendType: 'azurerm'
+    backendServiceArm: '$(azureResourceManagerConnection)'
+    backendAzureRmResourceGroupName: '$(tfBackendResourceGroupName)'
+    backendAzureRmStorageAccountName: '$(tfBackendStorageAccountName)'
+    backendAzureRmContainerName: '$(tfBackendContainerName)'
+    backendAzureRmKey: '${{ parameters.environment }}${{ parameters.service }}'
+
+- task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+  displayName: "Terraform plan"
+  inputs:
+    command: 'plan'
+    workingDirectory: '$(Build.SourcesDirectory)/deploy/infrastructure/${{ parameters.service }}'
+    ${{ if eq(parameters.environment, 'shared')  }}:
+      commandOptions: '-var-file="$(System.DefaultWorkingDirectory)/deploy/infrastructure/${{ parameters.service }}/variables.tfvars" --out=${{ parameters.service }}.tfplan'
+    ${{ else }}:
+      commandOptions: '-var-file="$(System.DefaultWorkingDirectory)/deploy/infrastructure/${{ parameters.service }}/${{ parameters.environment}}.tfvars" --out=${{ parameters.service }}.tfplan'
+    environmentServiceName: '$(azureResourceManagerConnection)'
+    backendServiceName: '$(azureResourceManagerConnection)'
+    backendAzureRmResourceGroupName: '$(tfBackendResourceGroupName)'
+    backendAzureRmStorageAccountName: '$(tfBackendStorageAccountName)'
+    backendAzureRmContainerName: '$(tfBackendContainerName)'
+    backendAzureRmKey: '${{ parameters.environment }}${{ parameters.service }}'
+    publishPlanResults: "PlanResults${{ parameters.environment }}"
+
+- task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
+  displayName: "Terraform apply"
+  inputs:
+    command: 'apply'
+    workingDirectory: '$(Build.SourcesDirectory)/deploy/infrastructure/${{ parameters.service }}'
+    commandOptions: '-auto-approve ${{ parameters.service }}.tfplan'
+    environmentServiceName: '$(azureResourceManagerConnection)'
+    backendService: '$(azureResourceManagerConnection)'
+    backendAzureRmResourceGroupName: '$(tfBackendResourceGroupName)'
+    backendAzureRmStorageAccountName: '$(tfBackendStorageAccountName)'
+    backendAzureRmContainerName: '$(tfBackendContainerName)'
+    backendAzureRmKey: '${{ parameters.environment }}${{ parameters.service }}'

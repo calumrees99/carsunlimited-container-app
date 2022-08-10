@@ -1,0 +1,5 @@
+unit = "csr"
+service = "shared"
+location = "UK South"
+location_short_code = "uks"
+environment = "prd"

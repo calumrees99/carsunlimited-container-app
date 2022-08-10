@@ -1,0 +1,46 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/src/CarsUnlimited.CartAPI" # Location of package manifests
+    schedule:
+      interval: "daily"   
+   
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/src/CarsUnlimited.CartShared" # Location of package manifests
+    schedule:
+      interval: "daily"    
+  
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/src/CarsUnlimited.CartWorker" # Location of package manifests
+    schedule:
+      interval: "daily" 
+  
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/src/CarsUnlimited.InventoryAPI" # Location of package manifests
+    schedule:
+      interval: "daily"   
+
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/src/CarsUnlimited.InventoryShared" # Location of package manifests
+    schedule:
+      interval: "daily"   
+
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/src/CarsUnlimited.InventoryWorker" # Location of package manifests
+    schedule:
+      interval: "daily"   
+
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/src/CarsUnlimited.Shared" # Location of package manifests
+    schedule:
+      interval: "daily"   
+
+  - package-ecosystem: "nuget" # See documentation for possible values
+    directory: "/src/CarsUnlimited.Web" # Location of package manifests
+    schedule:
+      interval: "daily"   
+
+  - package-ecosystem: "gomod" # See documentation for possible values
+    directory: "/src/CarsUnlimited-Purchase-API" # Location of package manifests
+    schedule:
+      interval: "daily"   

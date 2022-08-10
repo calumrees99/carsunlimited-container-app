@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+
+  inventorydb:
+    container_name: mongodb
+    build:
+      context: InventoryDb/
+      dockerfile: Dockerfile
+    ports:
+    - 27017:27017
+
+  inventory-api:
+   image: ${DOCKER_REGISTRY-}inventory.api
+   build:
+    context: .
+    dockerfile: CarsUnlimited.InventoryAPI/Dockerfile
+   ports:
+    - 5010:80
+   environment:
+   - ASPNETCORE_ENVIRONMENT=Development
+   - InventoryDatabaseSettings__ConnectionString=mongodb://inventorydb:27017
+   - TracingConfiguration__Exporter=-1
+   - TracingConfiguration__JaegerEndpoint__Host=jaeger
+   - TracingConfiguration__JaegerEndpoint__Port=6831
+   - AllowedOrigins="http://localhost:3000"
+   depends_on:
+    - inventorydb    

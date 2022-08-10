@@ -1,0 +1,11 @@
+## Deploy terraform state
+steps:
+- task: AzureCLI@2
+  displayName: 'deploy bicep template'
+  inputs:
+    azureSubscription: $(azureResourceManagerConnection)
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      az group create --name "$(tfBackendResourceGroupName)" --location "$(location)"
+      az deployment group create --template-file $(Build.SourcesDirectory)/deploy/tfstate/tfstate.deploy.bicep --resource-group "$(tfBackendResourceGroupName)" --mode Incremental --parameters tfBackendStorageAccountName='$(tfBackendStorageAccountName)' --parameters tfBackendContainerName='$(tfBackendContainerName)'

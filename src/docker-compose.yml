@@ -1,0 +1,125 @@
+version: '3.8'
+
+services:
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+      - "9411:9411"
+
+  rabbitmq:
+    image: 'docker.io/bitnami/rabbitmq:3.8.13'
+    ports:
+      - '4369:4369'
+      - '5672:5672'
+      - '25672:25672'
+      - '15672:15672'
+    volumes:
+      - 'rabbitmq-data:/bitnami'
+
+  cartdb:
+    image: redis:6.2-alpine
+    ports:
+    - 6379:6379
+
+  inventorydb:
+    container_name: mongodb
+    build:
+      context: InventoryDb/
+      dockerfile: Dockerfile
+    ports:
+    - 27017:27017
+
+  inventoryapi:
+    image: ${DOCKER_REGISTRY-}inventory.api
+    build:
+      context: .
+      dockerfile: CarsUnlimited.InventoryAPI/Dockerfile
+    ports:
+      - 5010:80
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    - InventoryDatabaseSettings__ConnectionString=mongodb://inventorydb:27017
+    - TracingConfiguration__Exporter=0
+    - TracingConfiguration__JaegerEndpoint__Host=jaeger
+    - TracingConfiguration__JaegerEndpoint__Port=6831
+    - InventoryApiKey=THIS_IS_MY_KEY
+    depends_on:
+      - inventorydb    
+
+  inventoryworker:
+    image: ${DOCKER_REGISTRY-}inventory.worker
+    build:
+      context: .
+      dockerfile: CarsUnlimited.InventoryWorker/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ServiceBusConfiguration__HostName=rabbitmq
+      - ServiceBusConfiguration__UserName=user
+      - ServiceBusConfiguration__Password=bitnami
+      - InventoryApiKey=THIS_IS_MY_KEY
+      - InventoryApiUrl=http://inventoryapi/api/Inventory/
+    depends_on:
+      - inventorydb
+      - rabbitmq
+      - inventoryapi
+    restart: on-failure
+
+  cartapi:
+    image: ${DOCKER_REGISTRY-}cart.api
+    build:
+      context: .
+      dockerfile: CarsUnlimited.CartAPI/Dockerfile
+    ports:
+      - 5020:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Redis__Password=""
+      - RedisSettings__Ssl=false
+      - RedisSettings__Host=cartdb
+      - RedisSettings__Port=6379
+      - TracingConfiguration__Exporter=0
+      - TracingConfiguration__JaegerEndpoint__Host=jaeger
+      - TracingConfiguration__JaegerEndpoint__Port=6831
+      - ServiceBusConfiguration__HostName=rabbitmq
+      - ServiceBusConfiguration__UserName=user
+      - ServiceBusConfiguration__Password=bitnami
+    depends_on:
+      - cartdb
+      - rabbitmq
+
+  cartworker:
+    image: ${DOCKER_REGISTRY-}cart.worker
+    build:
+      context: .
+      dockerfile: CarsUnlimited.CartWorker/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ServiceBusConfiguration__HostName=rabbitmq
+      - ServiceBusConfiguration__UserName=user
+      - ServiceBusConfiguration__Password=bitnami
+      - CartApiKey=THIS_IS_MY_KEY
+      - CartApiUrl=http://cartapi/api/Cart/
+    depends_on:
+      - cartdb
+      - rabbitmq
+      - cartapi
+    restart: on-failure
+
+  purchaseapi:
+    image: ${DOCKER_REGISTRY-}purchase.api
+    build:
+      context: CarsUnlimited-Purchase-API
+      dockerfile: Dockerfile
+    environment:
+      - SERVICE_BUS_CONNECTION_STRING=amqp://user:bitnami@rabbitmq:5672/
+    ports:
+      - 5030:8080
+    depends_on:
+      - rabbitmq
+
+volumes:
+  rabbitmq-data:
+    driver: local

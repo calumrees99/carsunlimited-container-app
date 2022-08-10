@@ -1,0 +1,41 @@
+## DEPLOY SERVICE STEPS
+parameters:
+  - name: path
+    type: string
+  - name: azureResourceManagerConnection
+    type: string
+  - name: namespace
+    type: object
+
+steps:    
+- task: replacetokens@3
+  inputs:
+    rootDirectory: '$(System.DefaultWorkingDirectory)/deploy/service/front-end'
+    targetFiles: '**/*.yaml'
+    encoding: 'auto'
+    writeBOM: true
+    actionOnMissing: 'warn'
+    keepToken: false
+    actionOnNoFiles: 'continue'
+    enableTransforms: false
+    tokenPrefix: '__'
+    tokenSuffix: '__'
+    useLegacyPattern: false
+    enableTelemetry: true
+
+- task: AzureCLI@2
+  displayName: Login to AKS Cluster
+  inputs:
+    azureSubscription: ${{ parameters.azureResourceManagerConnection }}
+    scriptType: 'pscore'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Connecting to cluster"
+      az aks get-credentials -n $(AKSname) -g $(AKSRGname) --admin --overwrite-existing
+
+- task: Kubernetes@1    
+  inputs:
+    connectionType: 'None'
+    command: 'apply'
+    workingDirectory: '${{ parameters.path }}'    
+    arguments: '-f . --recursive'
