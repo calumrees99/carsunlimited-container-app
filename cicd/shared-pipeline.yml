@@ -1,5 +1,4 @@
 name: $(SourceBranchName)-$(Date:yyyyMMdd)$(Rev:.r)
-pool: 'linux pool'
 trigger:
   branches:
     include:
@@ -11,7 +10,7 @@ trigger:
 parameters:
   - name: environments
     type: object
-    default: [dev]
+    default: ['dev']
 
 variables:
 - template: variables/vars-global.yml
@@ -50,5 +49,5 @@ stages:
         steps:
           - template: steps/steps-deploy-terraform.yml
             parameters:
-              environment: '{{ parameters.env }}'
+              environment: '${{ parameters.env }}'
               service: 'environment_shared'
