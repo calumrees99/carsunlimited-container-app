@@ -85,8 +85,8 @@ resource "azapi_resource" "app" {
       template = {
         containers = [
           {
-            image = "string"
-            name = "string"
+            image = "csrcarsshareduksacr.azurecr.io/${service}:${tag}"
+            name = "${service}"
             args = [
               "string"
             ]

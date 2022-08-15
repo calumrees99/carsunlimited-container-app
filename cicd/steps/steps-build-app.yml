@@ -7,7 +7,7 @@ steps:
   displayName: Build an image
   inputs:
     containerRegistry: '$(dockerRegistryServiceConnection)'
-    repository: '$(imageRepository)'
+    repository: '$(service)'
     command: 'build'
     Dockerfile: '$(dockerfilePath)' 
     buildContext: '$(Build.SourcesDirectory)/src'

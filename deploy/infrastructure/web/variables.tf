@@ -18,3 +18,8 @@ variable "skuTier" {
   description = "sku tier for app service plan"
   default = "Standard"
 }
+
+variable "tag" {
+  type = string
+  description = "This is based of the Build definition and gets passed into terraform through the command line"
+}
