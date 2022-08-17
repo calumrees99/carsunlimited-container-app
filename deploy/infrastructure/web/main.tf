@@ -60,6 +60,12 @@ resource "azapi_resource" "app" {
     properties = {
       configuration = {
         activeRevisionsMode = "string"
+        dapr = {
+          appId = "${local.resource_prefix}-app"
+          appPort = 3000
+          appProtocol = "http"
+          enabled = true
+        }
         ingress = {
           allowInsecure = true
           external = bool
