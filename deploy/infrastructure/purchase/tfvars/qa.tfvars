@@ -1,0 +1,5 @@
+unit = "csr"
+service = "purchase"
+location = "UK South"
+location_short_code = "uks"
+environment = "qa"

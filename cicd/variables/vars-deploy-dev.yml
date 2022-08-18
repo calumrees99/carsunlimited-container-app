@@ -1,3 +1,2 @@
 variables:
   environment: "dev"
-  namespace: "dev"

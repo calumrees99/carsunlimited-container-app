@@ -1,0 +1,3 @@
+variables:
+  service: 'inventory-db' 
+  dockerfilePath: '$(Build.SourcesDirectory)/src/InventoryDb/Dockerfile'

@@ -1,0 +1,65 @@
+name: $(SourceBranchName)-$(Date:yyyyMMdd)$(Rev:.r)
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - cicd/purchase-pipeline.yml
+
+parameters:
+- name: nonProdEnvironments
+  type: object
+  default: ['dev']
+- name: prodEnvironments
+  type: object
+  default: ['prd']
+
+variables:
+- template: variables/vars-global.yml
+
+stages:
+- stage: BuildScanPush
+  displayName: Build, Scan & Push Image to ACR
+  jobs:
+  - job:
+    variables:
+    - template: variables/vars-build-common.yml
+    - template: variables/vars-build-purchase.yml
+    steps:
+      - template: steps/steps-build-app.yml
+
+- stage: DeployNonProd
+  displayName: Deploy to Non-Prod
+  jobs:
+  - ${{ each env in parameters.nonPrdEnvironments }}:
+    - job: Deploy${{ env }}
+      variables:
+      - template: variables/vars-deploy-${{ env }}.yml
+      steps:
+      - template: steps/steps-deploy-terraform.yml
+        parameters:
+          path: $(System.DefaultWorkingDirectory)/deploy/infrastructure/purchase
+          azureResourceManagerConnection: $(azureResourceManagerConnection)  
+          service: purchase
+          environment: ${{ env }}
+
+# - stage: DeployProd
+#   displayName: Deploy to Prod
+#   jobs:
+#   - ${{ each env in parameters.prodEnvironments }}:
+#     - deployment: 'ApprovalCheck'
+#       environment: 'csr-purchase-${{ env }}'
+#     - job: Deploy${{ env }}
+#       variables:
+#       - template: variables/vars-deploy-${{ env }}.yml
+#       steps:
+#       - template: steps/steps-deploy-terraform.yml
+#         parameters:
+#           path: $(System.DefaultWorkingDirectory)/deploy/service/purchase
+#           azureResourceManagerConnection: $(azureResourceManagerConnection)  
+#           service: purchase
+#           environment: ${{ env }}
+
+
+

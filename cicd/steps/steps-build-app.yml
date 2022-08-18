@@ -2,20 +2,20 @@
 ## BUILD/Scan/Push Docker Image
 steps:
 
-- task: replacetokens@3
-  condition: ${{ if eq (variables['service'], 'web') }}
-  inputs:
-    rootDirectory: '$(System.DefaultWorkingDirectory)/src/carsunlimited-web-ui'
-    targetFiles: '.env.development'
-    encoding: 'auto'
-    writeBOM: true
-    actionOnMissing: 'warn'
-    keepToken: false
-    tokenPrefix: '__'
-    tokenSuffix: '__'
-    useLegacyPattern: false
-    enableTransforms: false
-    enableTelemetry: true
+# - task: replacetokens@3
+#   condition: ${{ if eq (variables['service'], 'web') }}
+#   inputs:
+#     rootDirectory: '$(System.DefaultWorkingDirectory)/src/carsunlimited-web-ui'
+#     targetFiles: '.env.development'
+#     encoding: 'auto'
+#     writeBOM: true
+#     actionOnMissing: 'warn'
+#     keepToken: false
+#     tokenPrefix: '__'
+#     tokenSuffix: '__'
+#     useLegacyPattern: false
+#     enableTransforms: false
+#     enableTelemetry: true
 
 
 # Build the docker container

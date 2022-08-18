@@ -1,0 +1,69 @@
+name: $(SourceBranchName)-$(Date:yyyyMMdd)$(Rev:.r)
+trigger:
+  branches:
+    include:
+    - main
+  paths:
+    include:
+    - cicd/inventory-pipeline.yml
+
+parameters:
+- name: nonProdEnvironments
+  type: object
+  default: ['dev']
+- name: prodEnvironments
+  type: object
+  default: ['prd']
+- name: containers
+  type: object
+  defaults: ['inventoryAPI', 'inventoryWorker', 'inventoryDb']
+
+variables:
+- template: variables/vars-global.yml
+
+stages:
+- stage: BuildScanPush
+  displayName: Build, Scan & Push Image to ACR
+  jobs:
+  - ${{ each container in parameters.containers }}:
+    - job:
+      variables:
+      - template: variables/vars-build-common.yml
+      - template: variables/vars-build-{{ container }}.yml
+      steps:
+        - template: steps/steps-build-app.yml
+
+- stage: DeployNonProd
+  displayName: Deploy to Non-Prod
+  jobs:
+  - ${{ each env in parameters.NonPrdEnvironments }}:
+    - job: Deploy${{ env }}
+      variables:
+      - template: variables/vars-deploy-${{ env }}.yml
+      steps:
+      - template: steps/steps-deploy-terraform.yml
+        parameters:
+          path: $(System.DefaultWorkingDirectory)/deploy/infrastructure/inventory
+          azureResourceManagerConnection: $(azureResourceManagerConnection)  
+          service: inventory
+          environment: ${{ env }}
+
+# - stage: DeployProd
+#   displayName: Deploy to Prod
+#   jobs:
+#   - ${{ each env in parameters.ProdEnvironments }}:
+#     - deployment: 'ApprovalCheck'
+#       environment: 'csr-inventory-${{ env }}'
+#     - job: Deploy${{ env }}
+#       variables:
+#       - template: variables/vars-deploy-${{ env }}.yml
+#       steps:
+#       - template: steps/steps-deploy-terraform.yml
+#         parameters:
+#           path: $(System.DefaultWorkingDirectory)/deploy/service/inventory
+#           azureResourceManagerConnection: $(azureResourceManagerConnection)  
+#           service: inventory
+#           environment: ${{ env }}
+
+
+

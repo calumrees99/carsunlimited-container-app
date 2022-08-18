@@ -1,7 +1,7 @@
 variables:
   tag: '$(Build.BuildNumber)'
   containerRegistry: 'csrcarsshareduksacr.azurecr.io'
-  terraformVersion: '1.0.11'
+  terraformVersion: '1.2.7'
   locationShortname: "uks"
   location: "UK South"
   tfBackendResourceGroupName: "csr-cars-tfstate-uks-rg"

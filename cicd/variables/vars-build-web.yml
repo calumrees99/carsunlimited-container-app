@@ -1,0 +1,3 @@
+variables:
+  service: 'web' 
+  dockerfilePath: '$(Build.SourcesDirectory)/src/carsunlimited-web-ui/Dockerfile'
