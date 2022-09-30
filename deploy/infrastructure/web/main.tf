@@ -104,11 +104,27 @@ resource "azapi_resource" "app" {
                 name = "string"
                 secretRef = "string"
                 value = "string"
+              },
+              {
+                name = "WebApiKey"
+                secretRef = "WebApiKey"
+              },
+              {
+                name = "CartApiKey"
+                secretRef = "CartApiKey"
+              },
+              {
+                name = "InventoryApiKey"
+                secretRef = "InventoryApiKey"
+              },
+              {
+                name = "ASPNETCORE_ENVIRONMENT"
+                value = "Development"
               }
             ]
           }
         ]
-        revisionSuffix = "string"
+        revisionSuffix = "${tag}"
       }
      }
     }
