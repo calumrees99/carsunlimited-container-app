@@ -61,7 +61,7 @@ resource "azurerm_role_assignment" "role_acr_pull" {
 
 resource "azapi_resource" "app_inventory_worker" {
   type = "Microsoft.App/containerApps@2022-03-01"
-  name = "${local.resource_prefix}worker-app"
+  name = "${local.resource_prefix}-app"
   location = azurerm_resource_group.rg.location
   parent_id = azurerm_resource_group.rg.id
   identity {
@@ -71,18 +71,16 @@ resource "azapi_resource" "app_inventory_worker" {
   body = jsonencode({
     properties = {
       configuration = {
-        activeRevisionsMode = "string"
         dapr = {
-          appId = "${local.resource_prefix}-app"
+          appId = "inventoryworker"
           appPort = 80
           appProtocol = "http"
           enabled = true
         }
         ingress = {
           allowInsecure = true
-          external = bool
+          external = false
           targetPort = 80
-          transport = "string"
         }
         registries = [
           {
@@ -97,8 +95,8 @@ resource "azapi_resource" "app_inventory_worker" {
       template = {
         containers = [
           {
-            image = "csrcarsshareduksacr.azurecr.io/inventoryWorker:${tag}"
-            name = "inventoryWorker"
+            image = "csrcarsshareduksacr.azurecr.io/inventoryworker:${tag}"
+            name = "inventoryworker"
             env = [
               {
                 name = "InventoryApiUrl"

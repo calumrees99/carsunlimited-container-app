@@ -72,7 +72,7 @@ resource "azapi_resource" "app_inventory_api" {
     properties = {
       configuration = {
         dapr = {
-          appId = "inventoryapi"
+          appId = "cartapi"
           appPort = 80
           appProtocol = "http"
           enabled = true
@@ -95,8 +95,8 @@ resource "azapi_resource" "app_inventory_api" {
       template = {
         containers = [
           {
-            image = "csrcarsshareduksacr.azurecr.io/inventoryapi:${tag}"
-            name = "inventoryapi"
+            image = "csrcarsshareduksacr.azurecr.io/cartapi:${tag}"
+            name = "inventoryApi"
             env = [
               {
                 name = "InventoryApiKey"

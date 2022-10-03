@@ -93,8 +93,8 @@ resource "azapi_resource" "app_mongo_db" {
       template = {
         containers = [
           {
-            image = "csrcarsshareduksacr.azurecr.io/inventoryDb:${tag}"
-            name = "inventoryDb"
+            image = "csrcarsshareduksacr.azurecr.io/inventorydb:${tag}"
+            name = "inventorydb"
           }
         ]
         revisionSuffix = "${tag}"
