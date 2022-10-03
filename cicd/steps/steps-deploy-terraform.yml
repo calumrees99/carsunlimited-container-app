@@ -31,7 +31,7 @@ steps:
     ${{ if eq(parameters.environment, 'shared')  }}:
       commandOptions: '-var-file="$(System.DefaultWorkingDirectory)/deploy/infrastructure/${{ parameters.service }}/variables.tfvars" --out=${{ parameters.service }}.tfplan'
     ${{ else }}:
-      commandOptions: '-var-file="$(System.DefaultWorkingDirectory)/deploy/infrastructure/${{ parameters.service }}/${{ parameters.environment}}.tfvars" -var tag=\"$(tag)\" --out=${{ parameters.service }}.tfplan'
+      commandOptions: '-var-file="$(System.DefaultWorkingDirectory)/deploy/infrastructure/${{ parameters.service }}/tfvars/${{ parameters.environment}}.tfvars" -var tag=\"$(tag)\" --out=${{ parameters.service }}.tfplan'
     environmentServiceName: '$(azureResourceManagerConnection)'
     backendServiceName: '$(azureResourceManagerConnection)'
     backendAzureRmResourceGroupName: '$(tfBackendResourceGroupName)'

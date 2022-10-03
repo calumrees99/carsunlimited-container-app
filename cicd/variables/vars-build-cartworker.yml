@@ -1,0 +1,3 @@
+variables:
+  service: 'cartworker' 
+  dockerfilePath: '$(Build.SourcesDirectory)/src/CarsUnlimited.CartWorker/Dockerfile'

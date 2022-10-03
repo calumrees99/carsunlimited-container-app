@@ -14,9 +14,12 @@ parameters:
 - name: prodEnvironments
   type: object
   default: ['prd']
+- name: images
+  type: object
+  default: ['cartapi','cartworker']
 - name: containers
   type: object
-  defaults: ['inventoryapi', 'inventoryworker', 'inventorydb']
+  default: ['cartapi', 'cartworker', 'cartdb']
 
 variables:
 - template: variables/vars-global.yml
@@ -25,11 +28,11 @@ stages:
 - stage: BuildScanPush
   displayName: Build, Scan & Push Image to ACR
   jobs:
-  - ${{ each container in parameters.containers }}:
+  - ${{ each image in parameters.images }}:
     - job:
       variables:
       - template: variables/vars-build-common.yml
-      - template: variables/vars-build-{{ container }}.yml
+      - template: variables/vars-build-{{ image }}.yml
       steps:
         - template: steps/steps-build-app.yml
 

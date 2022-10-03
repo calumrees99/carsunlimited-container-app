@@ -1,3 +1,3 @@
 variables:
-  service: 'inventory-api' 
+  service: 'inventoryapi' 
   dockerfilePath: '$(Build.SourcesDirectory)/src/CarsUnlimited.InventoryAPI/Dockerfile'
