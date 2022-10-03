@@ -46,7 +46,7 @@ stages:
           parameters:
             path: $(System.DefaultWorkingDirectory)/deploy/infrastructure/{{ container }}
             azureResourceManagerConnection: $(azureResourceManagerConnection)  
-            service: inventory
+            service: ${{ container }}
             environment: ${{ env }}
 
 # - stage: DeployProd

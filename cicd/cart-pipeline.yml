@@ -16,7 +16,7 @@ parameters:
   default: ['prd']
 - name: containers
   type: object
-  defaults: ['inventoryAPI', 'inventoryWorker', 'inventoryDb']
+  defaults: ['inventoryapi', 'inventoryworker', 'inventorydb']
 
 variables:
 - template: variables/vars-global.yml
@@ -37,16 +37,17 @@ stages:
   displayName: Deploy to Non-Prod
   jobs:
   - ${{ each env in parameters.NonPrdEnvironments }}:
-    - job: Deploy${{ env }}
-      variables:
-      - template: variables/vars-deploy-${{ env }}.yml
-      steps:
-      - template: steps/steps-deploy-terraform.yml
-        parameters:
-          path: $(System.DefaultWorkingDirectory)/deploy/infrastructure/inventory
-          azureResourceManagerConnection: $(azureResourceManagerConnection)  
-          service: inventory
-          environment: ${{ env }}
+    - ${{ each container in parameters.containers }}:
+      - job: Deploy${{ env }}
+        variables:
+        - template: variables/vars-deploy-${{ env }}.yml
+        steps:
+        - template: steps/steps-deploy-terraform.yml
+          parameters:
+            path: $(System.DefaultWorkingDirectory)/deploy/infrastructure/${{ container }}
+            azureResourceManagerConnection: $(azureResourceManagerConnection)  
+            service: ${{ container }}
+            environment: ${{ env }}
 
 # - stage: DeployProd
 #   displayName: Deploy to Prod
