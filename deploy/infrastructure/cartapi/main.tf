@@ -65,7 +65,7 @@ resource "azapi_resource" "app_inventory_api" {
   location = azurerm_resource_group.rg.location
   parent_id = azurerm_resource_group.rg.id
   identity {
-    type = "string"
+    type = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.uami.id]
   }
   body = jsonencode({
@@ -79,9 +79,8 @@ resource "azapi_resource" "app_inventory_api" {
         }
         ingress = {
           allowInsecure = true
-          external = bool
+          external = true
           targetPort = 80
-          transport = "string"
         }
         registries = [
           {
@@ -96,24 +95,32 @@ resource "azapi_resource" "app_inventory_api" {
         containers = [
           {
             image = "csrcarsshareduksacr.azurecr.io/cartapi:${tag}"
-            name = "inventoryApi"
+            name = "cartapi"
             env = [
               {
-                name = "InventoryApiKey"
-                secretRef = "InventoryApi"
+                name = "CartApiKey"
+                secretRef = "CartApi"
               },
               {
                 name = "ASPNETCORE_ENVIRONMENT"
                 value = "Development"
               },
               {              
-                name = "InventoryDatabaseSettings__ConnectionString"
-                value = "http://localhost:3500/v1.0/invoke/inventorydb"
+                name = "RedisSettings_Password"
+                value = ""
+              },
+              {              
+                name = "RedisSettings_Ssl"
+                value = "false"
+              },
+              {              
+                name = "RedisSettings_Host"
+                value = "localhost"
+              },
+              {              
+                name = "RedisSettings_Port"
+                value = "6379"
               }
-              # {              
-              #   name = "InventoryDatabaseSettings__ConnectionString"
-              #   value = "mongodb://localhost:27017"
-              # }
             ]
           }
         ]

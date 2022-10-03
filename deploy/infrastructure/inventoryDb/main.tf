@@ -65,7 +65,7 @@ resource "azapi_resource" "app_mongo_db" {
   location = azurerm_resource_group.rg.location
   parent_id = azurerm_resource_group.rg.id
   identity {
-    type = "string"
+    type = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.uami.id]
   }
   body = jsonencode({
