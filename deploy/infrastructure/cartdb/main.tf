@@ -72,15 +72,15 @@ resource "azapi_resource" "app_inventory_api" {
     properties = {
       configuration = {
         dapr = {
-          appId = "cartapi"
-          appPort = 80
+          appId = "cartdb"
+          appPort = 6379
           appProtocol = "http"
           enabled = true
         }
         ingress = {
           allowInsecure = true
           external = false
-          targetPort = 80
+          targetPort = 6379
         }
         registries = [
           {
@@ -94,34 +94,8 @@ resource "azapi_resource" "app_inventory_api" {
       template = {
         containers = [
           {
-            image = "csrcarsshareduksacr.azurecr.io/cartapi:${tag}"
-            name = "cartapi"
-            env = [
-              {
-                name = "CartApiKey"
-                secretRef = "CartApi"
-              },
-              {
-                name = "ASPNETCORE_ENVIRONMENT"
-                value = "Development"
-              },
-              {              
-                name = "RedisSettings_Password"
-                value = ""
-              },
-              {              
-                name = "RedisSettings_Ssl"
-                value = "false"
-              },
-              {              
-                name = "RedisSettings_Host"
-                value = "localhost"
-              },
-              {              
-                name = "RedisSettings_Port"
-                value = "6379"
-              }
-            ]
+            image = "csrcarsshareduksacr.azurecr.io/cartdb:${tag}"
+            name = "cartdb"
           }
         ]
         revisionSuffix = "${tag}"

@@ -72,7 +72,7 @@ resource "azapi_resource" "app_inventory_api" {
     properties = {
       configuration = {
         dapr = {
-          appId = "cartapi"
+          appId = "cartworker"
           appPort = 80
           appProtocol = "http"
           enabled = true
@@ -94,8 +94,8 @@ resource "azapi_resource" "app_inventory_api" {
       template = {
         containers = [
           {
-            image = "csrcarsshareduksacr.azurecr.io/cartapi:${tag}"
-            name = "cartapi"
+            image = "csrcarsshareduksacr.azurecr.io/cartworker:${tag}"
+            name = "cartworker"
             env = [
               {
                 name = "CartApiKey"
@@ -106,20 +106,8 @@ resource "azapi_resource" "app_inventory_api" {
                 value = "Development"
               },
               {              
-                name = "RedisSettings_Password"
-                value = ""
-              },
-              {              
-                name = "RedisSettings_Ssl"
-                value = "false"
-              },
-              {              
-                name = "RedisSettings_Host"
-                value = "localhost"
-              },
-              {              
-                name = "RedisSettings_Port"
-                value = "6379"
+                name = "CartApiUrl"
+                value = "http://localhost:3500/v1.0/invoke/cartapi"
               }
             ]
           }
