@@ -16,7 +16,7 @@ parameters:
   default: ['prd']
 - name: containers
   type: object
-  defaults: ['inventoryapi', 'inventoryworker', 'inventory']
+  defaults: ['inventoryapi', 'inventoryworker', 'inventorydb']
 
 variables:
 - template: variables/vars-global.yml
