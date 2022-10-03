@@ -1,5 +1,6 @@
 unit = "csr"
-service = "cars"
+service = "shared"
+project = "cars"
 location = "UK South"
 location_short_code = "uks"
 environment = "shared"

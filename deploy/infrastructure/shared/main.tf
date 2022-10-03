@@ -4,8 +4,8 @@
 ###############################################################################
 
 locals {
-  resource_prefix              = "${var.unit}-${var.service}-${var.environment}-${var.location_short_code}"
-  resource_prefix_no_separator = "${var.unit}${var.service}${var.environment}${var.location_short_code}"
+  resource_prefix              = "${var.unit}-${var.project}-${var.environment}-${var.location_short_code}"
+  resource_prefix_no_separator = "${var.unit}${var.project}${var.environment}${var.location_short_code}"
 }
 
 ###############################################################################
