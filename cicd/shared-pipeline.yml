@@ -6,6 +6,9 @@ trigger:
   paths:
     include:
     - cicd/shared-pipeline.yml
+    
+pool:
+  vmImage: 'ubuntu-latest'
 
 parameters:
   - name: environments
