@@ -38,9 +38,21 @@ data "azapi_resource" "data_cae" {
   parent_id = "csr-shared-${environment}-uks-rg"
 }
 
-data "azurerm_user_assigned_identity" "data_uami" {
-  resource_group_name = "$csr-shared-${environment}-uks-rg"
-  name                = "csr-shared-${environment}-uks-id"
+###############################################################################
+# Managed Identity
+###############################################################################
+
+resource "azurerm_user_assigned_identity" "uami" {
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_resource_group.rg.location
+  name                = "${local.resource_prefix}-id"
+}
+
+## Allow AcrPull access to ACR
+resource "azurerm_role_assignment" "role_acr_pull" {
+  scope                            = data.azurerm_container_registry.data_acr.id
+  role_definition_name             = "AcrPull"
+  principal_id                     = azurerm_user_assigned_identity.uami.principal_id
 }
 
 ###############################################################################
@@ -53,18 +65,22 @@ resource "azapi_resource" "app" {
   location = azurerm_resource_group.rg.location
   parent_id = azurerm_resource_group.rg.id
   identity {
-    type = "string"
-    identity_ids = [data.azurerm_user_assigned_identity.data_uami.id]
+    type = "UserAssigned"
+    identity_ids = [azurerm_user_assigned_identity.uami.id]
   }
   body = jsonencode({
     properties = {
       configuration = {
-        activeRevisionsMode = "string"
         dapr = {
-          appId = "${local.resource_prefix}-app"
-          appPort = 3030
+          appId = "purchaseapi"
+          appPort = 80
           appProtocol = "http"
           enabled = true
+        }
+        ingress = {
+          allowInsecure = true
+          external = false
+          targetPort = 80
         }
         registries = [
           {
@@ -74,38 +90,18 @@ resource "azapi_resource" "app" {
             username = data.azurerm_container_registry.data_acr.admin_username
           }
         ]
-        secrets = [
-          {
-            name = "string"
-            value = "string"
-          }
-        ]
-      managedEnvironmentId = data.azapi_resource.data_cae.id
-
+      }
       template = {
         containers = [
           {
             image = "csrcarsshareduksacr.azurecr.io/${service}:${tag}"
             name = "${service}"
-            args = [
-              "string"
-            ]
-            command = [
-              "string"
-            ]
-            env = [
-              {
-                name = "string"
-                secretRef = "string"
-                value = "string"
-              }
-            ]
           }
         ]
-        revisionSuffix = "string"
+        revisionSuffix = "${tag}"
       }
+      managedEnvironmentId = data.azapi_resource.data_cae.id 
      }
-    }
   })
 }
 

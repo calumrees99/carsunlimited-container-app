@@ -72,7 +72,7 @@ resource "azapi_resource" "app_inventory_api" {
     properties = {
       configuration = {
         dapr = {
-          appId = "inventoryapi"
+          appId = "${service}"
           appPort = 80
           appProtocol = "http"
           enabled = true
@@ -90,7 +90,7 @@ resource "azapi_resource" "app_inventory_api" {
             username = data.azurerm_container_registry.data_acr.admin_username
           }
         ]
-      managedEnvironmentId = data.azapi_resource.data_cae.id
+      }
       template = {
         containers = [
           {
@@ -118,7 +118,7 @@ resource "azapi_resource" "app_inventory_api" {
         ]
         revisionSuffix = "${tag}"
       }
+      managedEnvironmentId = data.azapi_resource.data_cae.id
      }
-    }
   })
 }

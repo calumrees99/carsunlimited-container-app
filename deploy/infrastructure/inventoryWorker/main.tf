@@ -72,11 +72,11 @@ resource "azapi_resource" "app_inventory_worker" {
     properties = {
       configuration = {
         dapr = {
-          appId = "inventoryworker"
+          appId = "${service}"
           appPort = 80
           appProtocol = "http"
           enabled = true
-        }
+        },
         ingress = {
           allowInsecure = true
           external = false
@@ -90,8 +90,7 @@ resource "azapi_resource" "app_inventory_worker" {
             username = data.azurerm_container_registry.data_acr.admin_username
           }
         ]
-      managedEnvironmentId = data.azapi_resource.data_cae.id
-
+      },
       template = {
         containers = [
           {
@@ -114,8 +113,8 @@ resource "azapi_resource" "app_inventory_worker" {
           }
         ]
         revisionSuffix = "${tag}"
-      }
+      },
+      managedEnvironmentId = data.azapi_resource.data_cae.id
      }
-    }
   })
 }

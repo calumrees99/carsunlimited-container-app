@@ -72,7 +72,7 @@ resource "azapi_resource" "app_mongo_db" {
     properties = {
       configuration = {
         dapr = {
-          appId = "inventorydb"
+          appId = "${service}"
           appPort = 27017
           appProtocol = "http"
           enabled = true
@@ -89,7 +89,7 @@ resource "azapi_resource" "app_mongo_db" {
             username = data.azurerm_container_registry.data_acr.admin_username
           }
         ]
-      managedEnvironmentId = data.azapi_resource.data_cae.id
+      }
       template = {
         containers = [
           {
@@ -99,7 +99,7 @@ resource "azapi_resource" "app_mongo_db" {
         ]
         revisionSuffix = "${tag}"
       }
+      managedEnvironmentId = data.azapi_resource.data_cae.id
      }
-    }
   })
 }

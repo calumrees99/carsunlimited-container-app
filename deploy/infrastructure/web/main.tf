@@ -90,12 +90,12 @@ resource "azapi_resource" "app" {
             username = data.azurerm_container_registry.data_acr.admin_username
           }
         ]
-      managedEnvironmentId = data.azapi_resource.data_cae.id
+      }
       template = {
         containers = [
           {
             image = "csrcarsshareduksacr.azurecr.io/${service}:${tag}"
-            name = "web"
+            name = "${service}"
             env = [
               {
                 name = "WebApiKey"
@@ -130,8 +130,8 @@ resource "azapi_resource" "app" {
         ]
         revisionSuffix = "${tag}"
       }
+      managedEnvironmentId = data.azapi_resource.data_cae.id 
      }
-    }
   })
 }
 

@@ -1,5 +1,5 @@
-unit = "csr"
-service = "purchase"
+project = "cars"
+service = "purchaseapi"
 location = "UK South"
 location_short_code = "uks"
 environment = "dev"
