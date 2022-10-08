@@ -29,8 +29,6 @@ stages:
     jobs:
       - job: Deploy_SharedTerraform
         displayName: Deploy_Shared
-        variables:
-          - template: variables/vars-deploy-terraform-shared.yml
         steps:
           - template: steps/steps-deploy-terraform.yml
             parameters:
