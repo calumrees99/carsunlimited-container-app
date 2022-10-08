@@ -47,8 +47,6 @@ stages:
         steps:
         - template: steps/steps-deploy-terraform.yml
           parameters:
-            path: $(System.DefaultWorkingDirectory)/deploy/infrastructure/${{ container }}
-            azureResourceManagerConnection: $(azureResourceManagerConnection)  
             service: ${{ container }}
             environment: ${{ env }}
 
