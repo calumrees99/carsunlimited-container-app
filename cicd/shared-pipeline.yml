@@ -44,8 +44,6 @@ stages:
       - job: Deploy_${{ env }}_shared
         displayName: Deploy_${{ env }}}_shared
         condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main')) 
-        variables:
-          - template: variables/vars-deploy-terraform-${{ env }}.yml
         steps:
           - template: steps/steps-deploy-terraform.yml
             parameters:
