@@ -72,7 +72,7 @@ resource "azapi_resource" "app" {
     properties = {
       configuration = {
         dapr = {
-          appId = "webapi"
+          appId = "web"
           appPort = 80
           appProtocol = "http"
           enabled = true
@@ -95,7 +95,7 @@ resource "azapi_resource" "app" {
         containers = [
           {
             image = "csrcarsshareduksacr.azurecr.io/${service}:${tag}"
-            name = "webapi"
+            name = "web"
             env = [
               {
                 name = "WebApiKey"
