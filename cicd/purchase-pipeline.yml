@@ -32,7 +32,7 @@ stages:
 - stage: DeployNonProd
   displayName: Deploy to Non-Prod
   jobs:
-  - ${{ each env in parameters.nonPrdEnvironments }}:
+  - ${{ each env in parameters.nonProdEnvironments }}:
     - job: Deploy${{ env }}
       variables:
       - template: variables/vars-deploy-${{ env }}.yml

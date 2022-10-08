@@ -36,7 +36,7 @@ stages:
 - stage: DeployNonProd
   displayName: Deploy to Non-Prod
   jobs:
-  - ${{ each env in parameters.NonPrdEnvironments }}:
+  - ${{ each env in parameters.NonProdEnvironments }}:
     - ${{ each container in parameters.containers }}:
       - job: Deploy${{ env }}
         variables:
