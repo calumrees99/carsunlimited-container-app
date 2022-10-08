@@ -6,7 +6,7 @@ parameters:
 
 steps:
 ## Deploy Terraform
-- task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+- task: charleszipp.azure-pipelines-tasks-terraform.azure-pipelines-tasks-terraform-cli.TerraformCLI@0
   displayName: "Install Terraform"
   inputs:
     terraformVersion: '$(terraformVersion)'
