@@ -7,7 +7,7 @@ trigger:
     include:
     - cicd/shared-pipeline.yml
 
-pool: 'Own Machine'
+pool: 'Azure Pipelines'
 
 parameters:
   - name: environments
