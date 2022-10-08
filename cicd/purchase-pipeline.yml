@@ -39,9 +39,9 @@ stages:
       steps:
       - template: steps/steps-deploy-terraform.yml
         parameters:
-          path: $(System.DefaultWorkingDirectory)/deploy/infrastructure/purchase
+          path: $(System.DefaultWorkingDirectory)/deploy/infrastructure/purchaseapi
           azureResourceManagerConnection: $(azureResourceManagerConnection)  
-          service: purchase
+          service: purchaseapi
           environment: ${{ env }}
 
 # - stage: DeployProd
