@@ -4,7 +4,7 @@ variable "location" {
 variable "location_short_code" {
     type = string
 }
-variable "service" {
+variable "project" {
     type = string
 }
 variable "unit" {
